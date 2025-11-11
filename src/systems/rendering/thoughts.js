@@ -144,13 +144,17 @@ export function renderThoughts() {
     for (const line of lines) {
         lineNumber++;
 
-        // Skip empty lines, headers, dividers, and code fences
+        // Skip empty lines, headers, dividers, code fences, and instruction lines
         if (!line.trim() ||
             line.includes('Present Characters') ||
             line.includes('---') ||
             line.trim().startsWith('```') ||
             line.trim() === '- …' ||
-            line.includes('(Repeat the format')) {
+            line.includes('(Repeat the format') ||
+            line.includes('(Continue this pattern') ||
+            line.includes('(List each present') ||
+            line.includes('IMPORTANT:') ||
+            line.includes('Do NOT combine')) {
             continue;
         }
 

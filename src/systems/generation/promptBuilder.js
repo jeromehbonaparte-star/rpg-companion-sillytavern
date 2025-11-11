@@ -244,15 +244,17 @@ export function generateTrackerInstructions(includeHtmlPrompt = true, includeCon
                 .map(f => `[${f.name}]`)
                 .join(' | ');
 
-            // Character block format - Show 2 examples so AI understands to list EACH character separately
+            // IMPORTANT: Show concrete multi-character example so AI creates separate blocks for EACH character
+            instructions += `IMPORTANT: List EACH present character as a separate block. Do NOT combine multiple characters into one entry.\n\n`;
+
             // Example 1
-            instructions += `- [Character 1 Name (do not include ${userName})]\n`;
+            instructions += `- [Character 1 Name (do NOT include ${userName})]\n`;
 
             // Details line with emoji and custom fields
             if (fieldPlaceholders) {
-                instructions += `Details: [Character 1's Emoji] | ${fieldPlaceholders}\n`;
+                instructions += `Details: [Emoji] | ${fieldPlaceholders}\n`;
             } else {
-                instructions += `Details: [Character 1's Emoji]\n`;
+                instructions += `Details: [Emoji]\n`;
             }
 
             // Relationship line (only if relationships are enabled)
@@ -279,9 +281,9 @@ export function generateTrackerInstructions(includeHtmlPrompt = true, includeCon
             instructions += `- [Character 2 Name]\n`;
 
             if (fieldPlaceholders) {
-                instructions += `Details: [Character 2's Emoji] | ${fieldPlaceholders}\n`;
+                instructions += `Details: [Emoji] | ${fieldPlaceholders}\n`;
             } else {
-                instructions += `Details: [Character 2's Emoji]\n`;
+                instructions += `Details: [Emoji]\n`;
             }
 
             if (relationshipPlaceholders) {
@@ -300,7 +302,33 @@ export function generateTrackerInstructions(includeHtmlPrompt = true, includeCon
             }
 
             instructions += `\n`;
-            instructions += `(List each present character separately following the format above. If no major characters are present, use "- Unavailable")\n`;
+
+            // Example 3
+            instructions += `- [Character 3 Name]\n`;
+
+            if (fieldPlaceholders) {
+                instructions += `Details: [Emoji] | ${fieldPlaceholders}\n`;
+            } else {
+                instructions += `Details: [Emoji]\n`;
+            }
+
+            if (relationshipPlaceholders) {
+                instructions += `Relationship: [${relationshipPlaceholders}]\n`;
+            }
+
+            if (enabledCharStats.length > 0) {
+                const statPlaceholders = enabledCharStats.map(s => `${s.name}: X%`).join(' | ');
+                instructions += `Stats: ${statPlaceholders}\n`;
+            }
+
+            if (thoughtsConfig?.enabled) {
+                const thoughtsName = thoughtsConfig.name || 'Thoughts';
+                const thoughtsDescription = thoughtsConfig.description || 'Internal monologue (in first person POV, up to three sentences long)';
+                instructions += `${thoughtsName}: [${thoughtsDescription}]\n`;
+            }
+
+            instructions += `\n`;
+            instructions += `(Continue this pattern for ALL present major characters. Each character MUST start with "- [Name]" on its own line. If no characters are present, use "- Unavailable")\n`;
 
             instructions += '```\n\n';
         }
