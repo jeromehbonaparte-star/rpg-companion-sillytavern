@@ -182,6 +182,14 @@ export function renderThoughts() {
         }
         // Check if this is a Details line
         else if (line.trim().startsWith('Details:') && currentCharacter) {
+            // SMART FIX: If currentCharacter already has emoji/details, this is likely a NEW character
+            // that the AI forgot to add a "- Name" line for. Create a new character object.
+            if (currentCharacter.emoji) {
+                debugLog(`[RPG Thoughts] ⚠️  Found Details line but current character already has data. AI likely omitted "- Name" line. Creating implicit new character.`);
+                currentCharacter = { name: currentCharacter.name }; // Keep same name for now, auto-fix will rename
+                presentCharacters.push(currentCharacter);
+            }
+
             const detailsContent = line.substring(line.indexOf(':') + 1).trim();
             const parts = detailsContent.split('|').map(p => p.trim());
 
